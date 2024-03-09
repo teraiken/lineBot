@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use LINE\Constants\HTTPHeader;
 use Symfony\Component\HttpFoundation\Response;
 
 class VerifyLineSignature
@@ -20,7 +21,7 @@ class VerifyLineSignature
         $hash = hash_hmac('sha256', $httpRequestBody, $channelSecret, true);
         $signature = base64_encode($hash);
 
-        if ($request->header('x-line-signature') !== $signature) {
+        if ($request->header(HTTPHeader::LINE_SIGNATURE) !== $signature) {
             return response()->json([], Response::HTTP_FORBIDDEN);
         }
 
