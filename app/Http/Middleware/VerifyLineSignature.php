@@ -21,7 +21,12 @@ class VerifyLineSignature
         $hash = hash_hmac('sha256', $httpRequestBody, $channelSecret, true);
         $signature = base64_encode($hash);
 
-        if ($request->header(HTTPHeader::LINE_SIGNATURE) !== $signature) {
+        $headerSignature = $request->header(HTTPHeader::LINE_SIGNATURE);
+        if (empty($headerSignature)) {
+            return response()->json([], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($headerSignature !== $signature) {
             return response()->json([], Response::HTTP_FORBIDDEN);
         }
 
