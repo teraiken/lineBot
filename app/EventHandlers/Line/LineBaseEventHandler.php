@@ -18,9 +18,9 @@ abstract class LineBaseEventHandler implements EventHandler
      * @param MessagingApiApi $bot
      * @param Event $event
      */
-    public function __construct(
-        private MessagingApiApi $bot,
-        private Event $event
+    protected function __construct(
+        protected MessagingApiApi $bot,
+        protected Event $event
     ) {
     }
 
