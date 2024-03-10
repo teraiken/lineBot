@@ -2,23 +2,37 @@
 
 namespace App\EventHandlers\Line;
 
-use App\EventHandlers\EventHandler;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use LINE\Clients\MessagingApi\Api\MessagingApiApi;
 use LINE\Webhook\Model\UnfollowEvent;
 
-class UnfollowEventHandler implements EventHandler
+class UnfollowEventHandler extends LineBaseEventHandler
 {
     /**
      * @param MessagingApiApi $bot
      * @param UnfollowEvent $event
      */
     public function __construct(
-        private MessagingApiApi $bot,
-        private UnfollowEvent $event
+        MessagingApiApi $bot,
+        UnfollowEvent $event
     ) {
+        parent::__construct(bot: $bot, event: $event);
     }
 
-    public function handle()
+    /**
+     * @return void
+     */
+    public function handle(): void
     {
+        $userId = $this->event->getSource()->getUserId();
+
+        User::lineUserId($userId)->delete();
+
+        Log::info(sprintf(
+            'Unfollowed this bot %s %s',
+            $this->event->getType(),
+            $userId
+        ));
     }
 }
